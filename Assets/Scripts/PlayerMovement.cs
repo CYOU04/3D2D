@@ -8,11 +8,9 @@ public class PlayerMovement : MonoBehaviour
     private float jumpHeight = 2f;
     private float gravity = -9.8f;
 
-    //Groud Check
     public PlayerGroundCheck playerGroundCheck;
 
-    private CameraSwitchManager cameraSwitchManager;
-    public Transform camera2D;
+    private GameViewSwitcher viewSwitcher;
 
     private CharacterController characterController;
     private Vector3 velocity;
@@ -20,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         characterController = GetComponent<CharacterController>();
-        cameraSwitchManager = GetComponent<CameraSwitchManager>();
+        viewSwitcher = GetComponent<GameViewSwitcher>();
     }
 
     void Update()
@@ -39,23 +37,21 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = Vector3.zero;
 
-        if (cameraSwitchManager != null && cameraSwitchManager.currentMode == CameraMode.CameraMode2D)
+        if (viewSwitcher != null && viewSwitcher.currentMode == GameViewSwitcher.GameMode.Mode2D)
         {
-            if (camera2D != null)
-            {
-                Vector3 cam2DRight = camera2D.right;
-                cam2DRight.y = 0f;
-                cam2DRight.Normalize();
-                move = cam2DRight * x;
+            Vector3 cam2DRight = Camera.main.transform.right;
+            cam2DRight.y = 0f;
+            cam2DRight.Normalize();
 
-                if (x > 0.1f)
-                {
-                    transform.forward = cam2DRight;
-                }
-                else if (x < -0.1f)
-                {
-                    transform.forward = -cam2DRight;
-                }
+            move = cam2DRight * x;
+
+            if (x > 0.1f)
+            {
+                transform.forward = cam2DRight;
+            }
+            else if (x < -0.1f)
+            {
+                transform.forward = -cam2DRight;
             }
         }
         else
