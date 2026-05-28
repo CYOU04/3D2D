@@ -9,12 +9,13 @@ public class PlayerMovement : MonoBehaviour
     private float gravity = -9.8f;
 
     public PlayerGroundCheck playerGroundCheck;
+    public bool isGrounded;
 
     private GameViewSwitcher viewSwitcher;
 
     private CharacterController characterController;
     private Vector3 velocity;
-    public bool isGrounded;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -75,7 +76,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            Debug.Log("jump");
+            //Debug.Log("jump");
         }
         velocity.y += gravity * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);

@@ -25,6 +25,8 @@ public class GameViewSwitcher : MonoBehaviour
     private Camera mainCam;
     private Transform camBoom3D;
 
+    public static bool is2DMode = false;
+
     void Start()
     {
         mainCam = Camera.main;
@@ -67,10 +69,14 @@ public class GameViewSwitcher : MonoBehaviour
     void LateUpdate()
     {
         if (mainCam == null)
+        {
             return;
+        }
 
         if (currentMode == GameMode.Mode2D)
         {
+            is2DMode = true;
+
             current2DYRotation = Mathf.LerpAngle(current2DYRotation, target2DYRotation, Time.deltaTime * rotateSpeed);
 
             Quaternion camRotation = Quaternion.Euler(0f, current2DYRotation, 0f);
@@ -92,6 +98,8 @@ public class GameViewSwitcher : MonoBehaviour
 
         if (currentMode == GameMode.Mode3D)
         {
+            is2DMode = false;
+
             mainCam.orthographic = false; // 恢复透视
             mainCam.fieldOfView = fov3D;
 
