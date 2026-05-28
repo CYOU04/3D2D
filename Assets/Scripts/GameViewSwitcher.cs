@@ -4,7 +4,8 @@ public class GameViewSwitcher : MonoBehaviour
 {
     public enum GameMode
     {
-        Mode3D, Mode2D
+        Mode3D,
+        Mode2D
     }
 
     public GameMode currentMode = GameMode.Mode3D;

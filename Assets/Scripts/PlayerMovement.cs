@@ -1,9 +1,9 @@
 using UnityEngine;
 
+//automatically add CharacterController component
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    //Moving
     private float moveSpeed = 6f;
     private float jumpHeight = 2f;
     private float gravity = -9.8f;
@@ -27,6 +27,8 @@ public class PlayerMovement : MonoBehaviour
         {
             isGrounded = playerGroundCheck.isGrounded;
         }
+
+        //apply pressure while on the ground to ensure isGrounded
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
@@ -37,6 +39,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = Vector3.zero;
 
+        //2d mode
         if (viewSwitcher != null && viewSwitcher.currentMode == GameViewSwitcher.GameMode.Mode2D)
         {
             Vector3 cam2DRight = Camera.main.transform.right;
@@ -45,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
 
             move = cam2DRight * x;
 
+            //turn around
             if (x > 0.1f)
             {
                 transform.forward = cam2DRight;
@@ -54,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
                 transform.forward = -cam2DRight;
             }
         }
+        //3d mode
         else
         {
             Vector3 camForward = Camera.main.transform.forward;
@@ -62,6 +67,7 @@ public class PlayerMovement : MonoBehaviour
             camRight.y = 0f;
             camForward.Normalize();
             camRight.Normalize();
+
             move = camRight * x + camForward * z;
         }
         characterController.Move(move * moveSpeed * Time.deltaTime);
