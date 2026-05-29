@@ -1,3 +1,5 @@
+using TMPro;
+using UnityEditorInternal;
 using UnityEngine;
 
 //automatically add CharacterController component
@@ -80,5 +82,10 @@ public class PlayerMovement : MonoBehaviour
         }
         velocity.y += gravity * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
+
+        if (transform.position.y <= -4f)
+        {
+            transform.position = new Vector3(0f, 1f, 0f);
+        }
     }
 }

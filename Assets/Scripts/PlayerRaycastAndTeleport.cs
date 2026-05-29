@@ -31,35 +31,31 @@ public class PlayerRaycastAndTeleport : MonoBehaviour
         RaycastHit leftRay;
         RaycastHit rightRay;
 
-        //float facingDirection = Mathf.Sign(transform.lossyScale.x);
         Vector3 leftDirection = -transform.right;
         Vector3 rightDirection = transform.right;
 
         if (Physics.Raycast(origin, leftDirection, out leftRay, rayDistance, targetLayer))
         {
-            if (Mathf.Abs(transform.forward.x) > Mathf.Abs(transform.forward.z))
-            {
-                TeleportPlayerZ(leftRay.collider);
-            }
-            else
-            {
-                TeleportPlayerX(leftRay.collider);
-            }
+            TeleportPlayer(leftRay.collider);
         }
         if (Physics.Raycast(origin, rightDirection, out rightRay, rayDistance, targetLayer))
         {
-            if (Mathf.Abs(transform.forward.x) > Mathf.Abs(transform.forward.z))
-            {
-                TeleportPlayerZ(rightRay.collider);
-            }
-            else
-            {
-                TeleportPlayerX(rightRay.collider);
-            }
+            TeleportPlayer(rightRay.collider);
         }
 
         Debug.DrawRay(origin, rightDirection * rayDistance, Color.red);
         Debug.DrawRay(origin, leftDirection * rayDistance, Color.blue);
+    }
+    void TeleportPlayer(Collider rayCollider)
+    {
+        if (Mathf.Abs(transform.forward.x) > Mathf.Abs(transform.forward.z))
+        {
+            TeleportPlayerZ(rayCollider);
+        }
+        else
+        {
+            TeleportPlayerX(rayCollider);
+        }
     }
     void TeleportPlayerZ(Collider cubeCollider)
     {
@@ -89,14 +85,6 @@ public class PlayerRaycastAndTeleport : MonoBehaviour
     }
     void Teleport(Vector3 targetPosition)
     {
-        if (TryGetComponent<Rigidbody>(out Rigidbody rb))
-        {
-            rb.position = targetPosition;
-            rb.linearVelocity = Vector3.zero;
-        }
-        else
-        {
-            transform.position = targetPosition;
-        }
+        transform.position = targetPosition;
     }
 }
