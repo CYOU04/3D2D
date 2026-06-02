@@ -30,4 +30,8 @@ public class MenuButton : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene("Title");
     }
+    public void HowtoPlay()
+    {
+        SceneManager.LoadScene("Guide");
+    }
 }
