@@ -27,6 +27,7 @@ public class Camera3D : MonoBehaviour
             playerTransform = transform.parent;
         }
 
+        //player's orientation
         if (playerTransform != null)
         {
             rotationY = playerTransform.eulerAngles.y;
@@ -39,7 +40,7 @@ public class Camera3D : MonoBehaviour
         
     }
 
-    private void LateUpdate()   //execute at the end of each frame
+    private void LateUpdate()//execute at the end of each frame
     {
         if (playerTransform == null)
         {
@@ -49,16 +50,16 @@ public class Camera3D : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        rotationY += mouseX;
-        rotationX -= mouseY;
+        rotationY += mouseX;//player
+        rotationX -= mouseY;//camera
 
         //limit vertical angle
         rotationX = Mathf.Clamp(rotationX, minPitch, maxPitch);
 
-        //the camera is responsible for looking up and down.
+        //camera looking up and down.
         transform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
 
-        //the player is responsible for turning around
+        //player turning around
         playerTransform.rotation = Quaternion.Euler(0f, rotationY, 0f);
     }
 

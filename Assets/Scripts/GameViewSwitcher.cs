@@ -10,7 +10,7 @@ public class GameViewSwitcher : MonoBehaviour
 
     public GameMode currentMode = GameMode.Mode3D;
 
-    private float orthoSize = 5f;
+    private float orthoSize = 5f;//field of vision 2D
     private float rotateSpeed = 5f;
     private float cameraDistance2D = 10f;
     private float cameraHeight2D = 2f;
@@ -94,13 +94,15 @@ public class GameViewSwitcher : MonoBehaviour
     void ApplyMode()
     {
         if (mainCam == null)
+        {
             return;
+        }
 
         if (currentMode == GameMode.Mode3D)
         {
             is2DMode = false;
 
-            mainCam.orthographic = false; // 恢复透视
+            mainCam.orthographic = false;
             mainCam.fieldOfView = fov3D;
 
             if (camBoom3D != null)
