@@ -1,5 +1,4 @@
 using TMPro;
-using UnityEditorInternal;
 using UnityEngine;
 
 //automatically add CharacterController component

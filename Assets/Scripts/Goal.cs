@@ -1,4 +1,3 @@
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,6 +25,8 @@ public class Goal : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             SceneManager.LoadScene("Result");
         }
     }

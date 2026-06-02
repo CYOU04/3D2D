@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Camera3D : MonoBehaviour
 {
-    private float mouseSensitivity = 200f;
+    public float mouseSensitivity = 50f;
 
     //get player
     public Transform playerTransform;
@@ -14,11 +14,15 @@ public class Camera3D : MonoBehaviour
     private float rotationY = 0f;
     void Start()
     {
+        Application.targetFrameRate = 60;
+
         //hide and lock the mouse
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible  = false;
 
-        if (playerTransform != null)
+        mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 50f);
+
+        if (playerTransform == null)
         {
             playerTransform = transform.parent;
         }
@@ -56,5 +60,10 @@ public class Camera3D : MonoBehaviour
 
         //the player is responsible for turning around
         playerTransform.rotation = Quaternion.Euler(0f, rotationY, 0f);
+    }
+
+    public void SetSensitivity(float newValue)
+    {
+        mouseSensitivity = newValue;
     }
 }

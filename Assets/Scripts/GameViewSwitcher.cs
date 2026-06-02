@@ -128,8 +128,8 @@ public class GameViewSwitcher : MonoBehaviour
             if (camera3DScript != null)
                 camera3DScript.enabled = false;
 
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
             float currentY = transform.eulerAngles.y;
             target2DYRotation = Mathf.Round(currentY / 90f) * 90f;
