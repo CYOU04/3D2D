@@ -21,7 +21,6 @@ public class GameViewSwitcher : MonoBehaviour
     private float fov3D = 60f;
 
     public Camera3D camera3DScript;
-
     private Camera mainCam;
     private Transform camBoom3D;
 
@@ -39,7 +38,9 @@ public class GameViewSwitcher : MonoBehaviour
         {
             camera3DScript = GetComponentInChildren<Camera3D>();
             if (camera3DScript != null)
+            {
                 camBoom3D = camera3DScript.transform;
+            }
         }
 
         ApplyMode();
@@ -78,11 +79,9 @@ public class GameViewSwitcher : MonoBehaviour
             is2DMode = true;
 
             current2DYRotation = Mathf.LerpAngle(current2DYRotation, target2DYRotation, Time.deltaTime * rotateSpeed);
-
             Quaternion camRotation = Quaternion.Euler(0f, current2DYRotation, 0f);
 
             Vector3 directionOffset = camRotation * new Vector3(0f, 0f, -cameraDistance2D);
-
             Vector3 targetCamPosition = transform.position + directionOffset;
             targetCamPosition.y += cameraHeight2D;
 
@@ -102,7 +101,7 @@ public class GameViewSwitcher : MonoBehaviour
         {
             is2DMode = false;
 
-            mainCam.orthographic = false;
+            mainCam.orthographic = false;//perspective
             mainCam.fieldOfView = fov3D;
 
             if (camBoom3D != null)
@@ -115,20 +114,24 @@ public class GameViewSwitcher : MonoBehaviour
             }
 
             if (camera3DScript != null)
-                camera3DScript.enabled = true;
+            {
+                camera3DScript.enabled = true;                
+            }
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
         else
         {
-            mainCam.orthographic = true;
+            mainCam.orthographic = true;//orthographic
             mainCam.orthographicSize = orthoSize;
 
             mainCam.transform.SetParent(null);
 
             if (camera3DScript != null)
+            {
                 camera3DScript.enabled = false;
+            }
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
