@@ -5,6 +5,7 @@ public class PlayerRaycastAndTeleport : MonoBehaviour
     public Transform checkPoint;
     private float rayDistance = 10f;
     [SerializeField] private LayerMask targetLayer;
+    [SerializeField] private Vector3 checkBoxHalfExtents = new Vector3(0.5f, 0.05f, 0.5f);
 
     void Start()
     {
@@ -28,19 +29,19 @@ public class PlayerRaycastAndTeleport : MonoBehaviour
 
         Vector3 origin = checkPoint.position;
 
-        RaycastHit leftRay;
-        RaycastHit rightRay;
-
         Vector3 leftDirection = -transform.right;
         Vector3 rightDirection = transform.right;
+        Quaternion boxRotation = transform.rotation;
 
-        if (Physics.Raycast(origin, leftDirection, out leftRay, rayDistance, targetLayer))
+        if (Physics.BoxCast(origin, checkBoxHalfExtents, leftDirection, out RaycastHit leftHit,
+            boxRotation, rayDistance, targetLayer, QueryTriggerInteraction.Ignore))
         {
-            TeleportPlayer(leftRay.collider);
+            TeleportPlayer(leftHit.collider);
         }
-        if (Physics.Raycast(origin, rightDirection, out rightRay, rayDistance, targetLayer))
+        if (Physics.BoxCast(origin, checkBoxHalfExtents, rightDirection, out RaycastHit rightHit,
+            boxRotation, rayDistance, targetLayer, QueryTriggerInteraction.Ignore))
         {
-            TeleportPlayer(rightRay.collider);
+            TeleportPlayer(rightHit.collider);
         }
 
         Debug.DrawRay(origin, rightDirection * rayDistance, Color.red);
@@ -86,5 +87,19 @@ public class PlayerRaycastAndTeleport : MonoBehaviour
     void Teleport(Vector3 targetPosition)
     {
         transform.position = targetPosition;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (checkPoint == null)
+        {
+            return;
+        }
+
+        Gizmos.color = Color.yellow;
+        Matrix4x4 previousMatrix = Gizmos.matrix;
+        Gizmos.matrix = Matrix4x4.TRS(checkPoint.position, transform.rotation, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, checkBoxHalfExtents * 2f);
+        Gizmos.matrix = previousMatrix;
     }
 }

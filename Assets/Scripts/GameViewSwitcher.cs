@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameViewSwitcher : MonoBehaviour
 {
@@ -26,9 +28,17 @@ public class GameViewSwitcher : MonoBehaviour
 
     public static bool is2DMode = false;
 
+    [Header("Black Screen Transition")]
+    [SerializeField] private float fadeToBlackDuration = 0.2f;
+    [SerializeField] private float fadeFromBlackDuration = 0.25f;
+
+    private CanvasGroup transitionCanvasGroup;
+    private bool isTransitioning;
+
     void Start()
     {
         mainCam = Camera.main;
+        CreateTransitionOverlay();
 
         if (camera3DScript != null)
         {
@@ -48,13 +58,12 @@ public class GameViewSwitcher : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && !isTransitioning && Time.timeScale > 0f)
         {
-            currentMode = (currentMode == GameMode.Mode3D) ? GameMode.Mode2D : GameMode.Mode3D;
-            ApplyMode();
+            StartCoroutine(SwitchModeWithTransition());
         }
 
-        if (currentMode == GameMode.Mode2D)
+        if (currentMode == GameMode.Mode2D && !isTransitioning)
         {
             if (Input.GetKeyDown(KeyCode.Q))
             {
@@ -65,6 +74,82 @@ public class GameViewSwitcher : MonoBehaviour
                 target2DYRotation -= 90f;
             }
         }
+    }
+
+    private IEnumerator SwitchModeWithTransition()
+    {
+        isTransitioning = true;
+
+        yield return FadeOverlay(0f, 1f, fadeToBlackDuration);
+
+        currentMode = (currentMode == GameMode.Mode3D) ? GameMode.Mode2D : GameMode.Mode3D;
+        ApplyMode();
+
+        // Wait one frame so the new camera mode is rendered behind the black overlay.
+        yield return null;
+        yield return FadeOverlay(1f, 0f, fadeFromBlackDuration);
+
+        isTransitioning = false;
+    }
+
+    private IEnumerator FadeOverlay(float startAlpha, float endAlpha, float duration)
+    {
+        if (transitionCanvasGroup == null)
+        {
+            yield break;
+        }
+
+        if (duration <= 0f)
+        {
+            transitionCanvasGroup.alpha = endAlpha;
+            yield break;
+        }
+
+        float elapsed = 0f;
+        transitionCanvasGroup.alpha = startAlpha;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float progress = Mathf.Clamp01(elapsed / duration);
+            transitionCanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, progress);
+            yield return null;
+        }
+
+        transitionCanvasGroup.alpha = endAlpha;
+    }
+
+    private void CreateTransitionOverlay()
+    {
+        GameObject canvasObject = new GameObject(
+            "ViewTransitionCanvas",
+            typeof(Canvas),
+            typeof(CanvasScaler),
+            typeof(GraphicRaycaster),
+            typeof(CanvasGroup)
+        );
+
+        Canvas canvas = canvasObject.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = short.MaxValue;
+
+        transitionCanvasGroup = canvasObject.GetComponent<CanvasGroup>();
+        transitionCanvasGroup.alpha = 0f;
+        transitionCanvasGroup.interactable = false;
+        transitionCanvasGroup.blocksRaycasts = false;
+
+        GameObject overlayObject = new GameObject("BlackOverlay", typeof(RectTransform), typeof(Image));
+        overlayObject.transform.SetParent(canvasObject.transform, false);
+
+        RectTransform overlayRect = overlayObject.GetComponent<RectTransform>();
+        overlayRect.anchorMin = Vector2.zero;
+        overlayRect.anchorMax = Vector2.one;
+        overlayRect.offsetMin = Vector2.zero;
+        overlayRect.offsetMax = Vector2.zero;
+
+        Image overlayImage = overlayObject.GetComponent<Image>();
+        overlayImage.color = Color.black;
+        overlayImage.raycastTarget = false;
     }
 
     void LateUpdate()
