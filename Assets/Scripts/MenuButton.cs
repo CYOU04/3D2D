@@ -18,7 +18,7 @@ public class MenuButton : MonoBehaviour
     public void StartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("GameBootstrap");
     }
     public void Quit()
     {
